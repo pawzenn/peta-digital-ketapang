@@ -35,6 +35,7 @@ class StoreWisataRequest extends FormRequest
 
             // FOTO: JPG/JPEG only
             'cover' => ['required', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+            'foto_rute' => ['nullable', 'image', 'mimes:jpg,jpeg', 'max:2048'],
             'gallery' => ['nullable', 'array'],
             'gallery.*' => ['image', 'mimes:jpg,jpeg', 'max:2048'],
         ];

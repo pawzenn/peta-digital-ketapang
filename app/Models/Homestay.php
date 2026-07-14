@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Homestay extends Model
 {
     protected $fillable = [
-        'nama', 'slug', 'deskripsi', 'rating', 'cover_foto', 'alamat', 'maps_link'
+        'nama', 'slug', 'deskripsi', 'rating', 'cover_foto', 'alamat', 'maps_link', 'foto_rute'
     ];
 
     public function galleries(): MorphMany

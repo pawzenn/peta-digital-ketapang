@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\HomestayController;
 use App\Http\Controllers\Admin\KategoriUmkmController;
 use App\Http\Controllers\Admin\UmkmController;
 use App\Http\Controllers\Admin\ProfilController;
+use App\Http\Controllers\Admin\BencanaController;
 
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -28,5 +29,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('homestay', HomestayController::class)->names('homestay');
         Route::resource('kategori-umkm', KategoriUmkmController::class)->names('kategori-umkm');
         Route::resource('umkm', UmkmController::class)->names('umkm');
+        Route::resource('bencana', BencanaController::class)->names('bencana');
     });
 });

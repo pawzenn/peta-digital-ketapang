@@ -115,6 +115,31 @@
         @endif
     </div>
 
+    {{-- Foto Rute --}}
+    <div>
+        <label class="block text-sm font-medium mb-1">Foto Rute (untuk section "Rute" di halaman detail)</label>
+        <input
+            type="file"
+            name="foto_rute"
+            accept=".jpg,.jpeg"
+            class="w-full rounded border px-3 py-2"
+        >
+        @error('foto_rute')
+            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+        @enderror
+
+        @if($isEdit && $wisata->foto_rute)
+            <div class="mt-3">
+                <p class="text-sm text-gray-600 mb-2">Foto rute saat ini:</p>
+                <img
+                    src="{{ asset('storage/' . $wisata->foto_rute) }}"
+                    alt="Rute {{ $wisata->nama }}"
+                    class="w-full max-w-md h-48 object-cover rounded border"
+                >
+            </div>
+        @endif
+    </div>
+
     {{-- Gallery --}}
     <div>
         <label class="block text-sm font-medium mb-1">Gallery (boleh banyak, JPG/JPEG)</label>

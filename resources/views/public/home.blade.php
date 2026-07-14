@@ -3,198 +3,151 @@
 @section('title', 'Beranda - Peta Digital Ketapang')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-6 py-16">
 
-    {{-- HERO / PROFIL --}}
-    <h1 class="text-4xl font-bold">
-        {{ $profil->nama ?? 'Peta Digital Desa Ketapang' }}
-    </h1>
+{{-- HERO --}}
+<div class="relative -mt-20 flex h-screen items-center justify-center overflow-hidden">
+    <img src="{{ asset('images/hero-ketapang.jpg') }}" alt="Pelabuhan Ketapang" class="absolute inset-0 h-full w-full object-cover">
 
-    <p class="mt-4 text-gray-600 max-w-2xl">
-        {{ \Illuminate\Support\Str::limit($profil->deskripsi ?? 'Website informasi desa berbasis peta untuk wisata, homestay, UMKM, dan kebencanaan.', 150) }}
-    </p>
+    {{-- soft glow behind navbar, for legibility over the photo --}}
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(255,247,239,0.8),rgba(255,247,239,0)_70%)]"></div>
 
-    @if(!empty($profil?->peta_wilayah))
-        <div class="mt-8">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
+
+    <div class="relative mt-16 flex flex-col items-center px-6 text-center">
+        <h1 class="font-serif text-4xl font-bold text-white md:text-5xl">
+            Selamat Datang di Peta Digital Ketapang
+        </h1>
+        <p class="mt-4 max-w-xl text-white/85">
+            Jelajahi wisata, homestay, dan UMKM Desa Ketapang, semua dalam satu peta digital.
+        </p>
+
+        <a href="#konten" class="mt-6 rounded-md bg-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-lg hover:bg-orange-600">
+            Yuk Jelajahi
+        </a>
+    </div>
+</div>
+
+<div id="konten" class="mx-auto max-w-7xl scroll-mt-20 px-6 py-16">
+
+    {{-- PROFIL --}}
+    <div class="grid gap-10 md:grid-cols-2 md:items-center">
+        <div>
+            <h2 class="text-2xl font-bold text-emerald-900">Profil Desa Ketapang</h2>
+            <p class="mt-4 leading-relaxed text-neutral-600">
+                {{ \Illuminate\Support\Str::limit($profil->deskripsi ?? 'Website informasi desa berbasis peta untuk wisata, homestay, UMKM, dan kebencanaan.', 480) }}
+            </p>
+        </div>
+
+        @if(!empty($profil?->peta_wilayah))
             <img
                 src="{{ asset('storage/' . $profil->peta_wilayah) }}"
                 alt="Peta Wilayah"
-                class="w-full max-w-3xl rounded border bg-white"
+                class="w-full rounded-xl border bg-white"
             >
-            <div class="text-xs text-gray-500 mt-2">
-                Peta wilayah desa (dikelola admin)
-            </div>
-        </div>
-    @endif
-
-    <div class="mt-8 flex gap-4">
-        <a href="/wisata" class="px-5 py-3 bg-black text-white rounded">
-            Jelajahi Wisata
-        </a>
-        <a href="/profil" class="px-5 py-3 border rounded">
-            Profil Desa
-        </a>
+        @endif
     </div>
 
+    {{-- WISATA --}}
+    <div class="mt-24">
+        <x-public.section-header
+            eyebrow="Jelajahi Alam"
+            title="Wisata Desa Ketapang"
+            subtitle="Pesona alam tersembunyi yang menanti untuk dijelajahi, dari tebing eksotis hingga aliran sungai yang menyejukkan."
+            href="/wisata"
+            align="left"
+        />
 
-    {{-- ============================= --}}
-    {{-- SECTION WISATA (TOP 3 RATING) --}}
-    {{-- ============================= --}}
-    <div class="mt-20">
-
-        <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold">Wisata Terpopuler</h2>
-            <a href="/wisata" class="text-sm underline text-gray-600">
-                Lihat semua
-            </a>
-        </div>
-
-        @if(isset($wisataTop) && $wisataTop->count())
-            <div class="mt-6 grid md:grid-cols-3 gap-6">
-
-                @foreach($wisataTop as $w)
-                    <div class="bg-white rounded border overflow-hidden hover:shadow-md transition">
-
-                        {{-- COVER --}}
-                        <div class="bg-gray-100">
-                            @if($w->cover_foto)
-                                <img
-                                    src="{{ asset('storage/' . $w->cover_foto) }}"
-                                    alt="{{ $w->nama }}"
-                                    class="w-full h-44 object-cover"
-                                >
-                            @else
-                                <div class="w-full h-44 flex items-center justify-center text-gray-500">
-                                    Tidak ada cover
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- CONTENT --}}
-                        <div class="p-4">
-
-                            <div class="text-xs text-gray-500">
-                                Rating:
-                                <span class="font-semibold">
-                                    {{ $w->rating ?? '-' }}
-                                </span>
-                            </div>
-
-                            <h3 class="mt-1 text-lg font-semibold">
-                                {{ $w->nama }}
-                            </h3>
-
-                            <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                                {{ \Illuminate\Support\Str::limit($w->deskripsi ?? '', 110) }}
-                            </p>
-
-                            <div class="mt-4 flex gap-2">
-                                <a href="/wisata/{{ $w->slug }}"
-                                   class="px-3 py-2 rounded bg-black text-white text-sm">
-                                    Detail
-                                </a>
-
-                                @if(!empty($w->maps_link))
-                                    <a href="{{ $w->maps_link }}"
-                                       target="_blank"
-                                       class="px-3 py-2 rounded border text-sm">
-                                        Maps
-                                    </a>
-                                @endif
-                            </div>
-
-                        </div>
-                    </div>
-                @endforeach
-
+        @if($wisataTop->count())
+            @php
+                $wisataItems = $wisataTop->map(fn ($w) => [
+                    'nama' => $w->nama,
+                    'deskripsi' => $w->deskripsi,
+                    'coverUrl' => $w->cover_foto ? asset('storage/'.$w->cover_foto) : null,
+                    'detailUrl' => '/wisata/'.$w->slug,
+                    'rating' => $w->rating,
+                ])->all();
+            @endphp
+            <div class="mt-6">
+                <x-public.carousel :items="$wisataItems" />
             </div>
         @else
-            <div class="mt-6 p-6 bg-white rounded border text-gray-600">
-                Belum ada data wisata.
+            <div class="mt-6 rounded-xl border bg-white p-6 text-neutral-500">Belum ada data wisata.</div>
+        @endif
+    </div>
+
+    {{-- UMKM --}}
+    <div class="mt-24">
+        <x-public.section-header
+            eyebrow="Produk Lokal"
+            title="UMKM Desa Ketapang"
+            subtitle="Karya dan cita rasa autentik hasil tangan warga, diracik dengan kehangatan khas pedesaan."
+            href="/umkm"
+            align="left"
+        />
+
+        @if($umkmTop->count())
+            @php
+                $umkmItems = $umkmTop->map(fn ($u) => [
+                    'nama' => $u->nama,
+                    'deskripsi' => $u->deskripsi,
+                    'coverUrl' => $u->cover_foto ? asset('storage/'.$u->cover_foto) : null,
+                    'detailUrl' => '/umkm/'.$u->slug,
+                    'rating' => $u->rating,
+                    'badge' => $u->kategori?->nama,
+                ])->all();
+            @endphp
+            <div class="mt-6">
+                <x-public.carousel :items="$umkmItems" />
+            </div>
+        @else
+            <div class="mt-6 rounded-xl border bg-white p-6 text-neutral-500">Belum ada data UMKM.</div>
+        @endif
+    </div>
+
+    {{-- HOMESTAY --}}
+    <div class="mt-24">
+        <x-public.section-header
+            eyebrow="Tempat Menginap"
+            title="Homestay Desa Ketapang"
+            subtitle="Hunian nyaman bernuansa alam pedesaan untuk pengalaman menginap yang berkesan."
+            href="/homestay"
+            align="left"
+        />
+
+        @if($homestayTop->count())
+            @php
+                $homestayItems = $homestayTop->map(fn ($h) => [
+                    'nama' => $h->nama,
+                    'deskripsi' => $h->deskripsi,
+                    'coverUrl' => $h->cover_foto ? asset('storage/'.$h->cover_foto) : null,
+                    'detailUrl' => '/homestay/'.$h->slug,
+                    'rating' => $h->rating,
+                ])->all();
+            @endphp
+            <div class="mt-6">
+                <x-public.carousel :items="$homestayItems" />
+            </div>
+        @else
+            <div class="mt-6 rounded-xl border bg-white p-6 text-neutral-500">Belum ada data homestay.</div>
+        @endif
+    </div>
+
+    {{-- PETA BENCANA --}}
+    <div id="peta-bencana" class="mt-24 scroll-mt-24">
+        <h2 class="text-2xl font-bold text-emerald-900">Peta Bencana</h2>
+
+        @if(!empty($profil?->peta_bencana))
+            <img
+                src="{{ asset('storage/' . $profil->peta_bencana) }}"
+                alt="Peta Bencana"
+                class="mt-6 w-full rounded-xl border bg-white"
+            >
+        @else
+            <div class="mt-6 rounded-xl border bg-white p-6 text-neutral-500">
+                Peta bencana belum diunggah admin.
             </div>
         @endif
-
     </div>
-
-    {{-- ============================= --}}
-{{-- SECTION HOMESTAY (TOP 3 RATING) --}}
-{{-- ============================= --}}
-<div class="mt-20">
-
-    <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold">Homestay Terpopuler</h2>
-        <a href="/homestay" class="text-sm underline text-gray-600">
-            Lihat semua
-        </a>
-    </div>
-
-    @if(isset($homestayTop) && $homestayTop->count())
-        <div class="mt-6 grid md:grid-cols-3 gap-6">
-
-            @foreach($homestayTop as $h)
-                <div class="bg-white rounded border overflow-hidden hover:shadow-md transition">
-
-                    {{-- COVER --}}
-                    <div class="bg-gray-100">
-                        @if($h->cover_foto)
-                            <img
-                                src="{{ asset('storage/' . $h->cover_foto) }}"
-                                alt="{{ $h->nama }}"
-                                class="w-full h-44 object-cover"
-                            >
-                        @else
-                            <div class="w-full h-44 flex items-center justify-center text-gray-500">
-                                Tidak ada cover
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- CONTENT --}}
-                    <div class="p-4">
-
-                        <div class="text-xs text-gray-500">
-                            Rating:
-                            <span class="font-semibold">
-                                {{ $h->rating ?? '-' }}
-                            </span>
-                        </div>
-
-                        <h3 class="mt-1 text-lg font-semibold">
-                            {{ $h->nama }}
-                        </h3>
-
-                        <p class="mt-2 text-sm text-gray-600 leading-relaxed">
-                            {{ \Illuminate\Support\Str::limit($h->deskripsi ?? '', 110) }}
-                        </p>
-
-                        <div class="mt-4 flex gap-2">
-                            <a href="/homestay/{{ $h->slug }}"
-                               class="px-3 py-2 rounded bg-black text-white text-sm">
-                                Detail
-                            </a>
-
-                            @if(!empty($h->maps_link))
-                                <a href="{{ $h->maps_link }}"
-                                   target="_blank"
-                                   class="px-3 py-2 rounded border text-sm">
-                                    Maps
-                                </a>
-                            @endif
-                        </div>
-
-                    </div>
-                </div>
-            @endforeach
-
-        </div>
-    @else
-        <div class="mt-6 p-6 bg-white rounded border text-gray-600">
-            Belum ada data homestay.
-        </div>
-    @endif
-
-</div>
-
 
 </div>
 @endsection

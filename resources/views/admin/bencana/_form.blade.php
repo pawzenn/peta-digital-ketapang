@@ -1,17 +1,32 @@
 @php
-    /** @var \App\Models\Homestay|null $homestay */
-    $isEdit = isset($homestay) && $homestay?->exists;
+    /** @var \App\Models\Bencana|null $bencana */
+    $isEdit = isset($bencana) && $bencana?->exists;
+
+    $jenisOptions = [
+        'banjir' => 'Banjir',
+        'longsor' => 'Longsor',
+        'kebakaran' => 'Kebakaran',
+        'gempa_bumi' => 'Gempa Bumi',
+        'angin_puting_beliung' => 'Angin Puting Beliung',
+        'lainnya' => 'Lainnya',
+    ];
+
+    $risikoOptions = [
+        'rendah' => 'Rendah',
+        'sedang' => 'Sedang',
+        'tinggi' => 'Tinggi',
+    ];
 @endphp
 
 <div class="space-y-6">
 
     {{-- Nama --}}
     <div>
-        <label class="block text-sm font-medium mb-1">Nama</label>
+        <label class="block text-sm font-medium mb-1">Nama / Judul</label>
         <input
             type="text"
             name="nama"
-            value="{{ old('nama', $homestay->nama ?? '') }}"
+            value="{{ old('nama', $bencana->nama ?? '') }}"
             class="w-full rounded border px-3 py-2"
             required
         >
@@ -20,48 +35,60 @@
         @enderror
     </div>
 
+    {{-- Jenis & Tingkat Risiko --}}
+    <div class="grid md:grid-cols-2 gap-6">
+        <div>
+            <label class="block text-sm font-medium mb-1">Jenis Bencana</label>
+            <select name="jenis_bencana" class="w-full rounded border px-3 py-2" required>
+                <option value="">- Pilih Jenis -</option>
+                @foreach($jenisOptions as $value => $label)
+                    <option value="{{ $value }}" @selected(old('jenis_bencana', $bencana->jenis_bencana ?? '') === $value)>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+            @error('jenis_bencana')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Tingkat Risiko</label>
+            <select name="tingkat_risiko" class="w-full rounded border px-3 py-2" required>
+                <option value="">- Pilih Tingkat -</option>
+                @foreach($risikoOptions as $value => $label)
+                    <option value="{{ $value }}" @selected(old('tingkat_risiko', $bencana->tingkat_risiko ?? '') === $value)>
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </select>
+            @error('tingkat_risiko')
+                <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
     {{-- Deskripsi --}}
     <div>
-        <label class="block text-sm font-medium mb-1">Deskripsi</label>
+        <label class="block text-sm font-medium mb-1">Deskripsi / Info Mitigasi</label>
         <textarea
             name="deskripsi"
             rows="5"
             class="w-full rounded border px-3 py-2"
             required
-        >{{ old('deskripsi', $homestay->deskripsi ?? '') }}</textarea>
+        >{{ old('deskripsi', $bencana->deskripsi ?? '') }}</textarea>
         @error('deskripsi')
             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
         @enderror
     </div>
 
-    {{-- Rating --}}
+    {{-- Alamat / Lokasi --}}
     <div>
-        <label class="block text-sm font-medium mb-1">Rating (1 - 5)</label>
-        <input
-            type="number"
-            name="rating"
-            step="0.1"
-            min="1"
-            max="5"
-            inputmode="decimal"
-            value="{{ old('rating', $homestay->rating ?? '') }}"
-            class="w-full rounded border px-3 py-2"
-            placeholder="contoh: 4.5"
-        >
-        <p class="text-xs text-gray-500 mt-1">Boleh desimal, contoh: 4.5 atau 4,5</p>
-
-        @error('rating')
-            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-        @enderror
-    </div>
-
-    {{-- Alamat --}}
-    <div>
-        <label class="block text-sm font-medium mb-1">Alamat / Nama Jalan</label>
+        <label class="block text-sm font-medium mb-1">Lokasi Rawan</label>
         <input
             type="text"
             name="alamat"
-            value="{{ old('alamat', $homestay->alamat ?? '') }}"
+            value="{{ old('alamat', $bencana->alamat ?? '') }}"
             class="w-full rounded border px-3 py-2"
         >
         @error('alamat')
@@ -75,7 +102,7 @@
         <input
             type="url"
             name="maps_link"
-            value="{{ old('maps_link', $homestay->maps_link ?? '') }}"
+            value="{{ old('maps_link', $bencana->maps_link ?? '') }}"
             class="w-full rounded border px-3 py-2"
             placeholder="https://maps.google.com/..."
         >
@@ -103,37 +130,12 @@
             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
         @enderror
 
-        @if($isEdit && $homestay->cover_foto)
+        @if($isEdit && $bencana->cover_foto)
             <div class="mt-3">
                 <p class="text-sm text-gray-600 mb-2">Cover saat ini:</p>
                 <img
-                    src="{{ asset('storage/' . $homestay->cover_foto) }}"
-                    alt="Cover {{ $homestay->nama }}"
-                    class="w-full max-w-md h-48 object-cover rounded border"
-                >
-            </div>
-        @endif
-    </div>
-
-    {{-- Foto Rute --}}
-    <div>
-        <label class="block text-sm font-medium mb-1">Foto Rute (untuk section "Rute" di halaman detail)</label>
-        <input
-            type="file"
-            name="foto_rute"
-            accept=".jpg,.jpeg"
-            class="w-full rounded border px-3 py-2"
-        >
-        @error('foto_rute')
-            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-        @enderror
-
-        @if($isEdit && $homestay->foto_rute)
-            <div class="mt-3">
-                <p class="text-sm text-gray-600 mb-2">Foto rute saat ini:</p>
-                <img
-                    src="{{ asset('storage/' . $homestay->foto_rute) }}"
-                    alt="Rute {{ $homestay->nama }}"
+                    src="{{ asset('storage/' . $bencana->cover_foto) }}"
+                    alt="Cover {{ $bencana->nama }}"
                     class="w-full max-w-md h-48 object-cover rounded border"
                 >
             </div>
@@ -158,11 +160,11 @@
             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
         @enderror
 
-        @if($isEdit && $homestay->relationLoaded('galleries') && $homestay->galleries->count())
+        @if($isEdit && $bencana->relationLoaded('galleries') && $bencana->galleries->count())
             <div class="mt-3">
                 <p class="text-sm text-gray-600 mb-2">Gallery saat ini:</p>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    @foreach($homestay->galleries as $foto)
+                    @foreach($bencana->galleries as $foto)
                         <div class="border rounded overflow-hidden">
                             <img
                                 src="{{ asset('storage/' . $foto->file_path) }}"

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\HomestayController;
+use App\Http\Controllers\Public\UmkmController;
 use App\Http\Controllers\Public\WisataController;
 
 
@@ -17,9 +18,9 @@ Route::get('/wisata/{slug}', [WisataController::class, 'show']);
 Route::get('/homestay', [HomestayController::class, 'index']);
 Route::get('/homestay/{slug}', [HomestayController::class, 'show']);
 
-Route::get('/umkm', fn () => view('public.umkm.index'));
-Route::get('/umkm/{slug}', fn ($slug) => view('public.umkm.show'));
+Route::get('/umkm', [UmkmController::class, 'index']);
+Route::get('/umkm/{slug}', [UmkmController::class, 'show']);
 
-Route::get('/bencana', fn () => view('public.bencana'));
+Route::redirect('/bencana', '/#peta-bencana');
 
 require __DIR__ . '/auth.php';

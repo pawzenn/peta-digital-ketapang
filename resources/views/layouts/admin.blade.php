@@ -65,8 +65,7 @@
                 Kategori UMKM
             </a>
 
-            {{-- Bencana (route belum dibuat, sementara ke dashboard) --}}
-            <a href="{{ route('admin.dashboard') }}"
+            <a href="{{ route('admin.bencana.index') }}"
                class="flex items-center px-3 py-2 rounded hover:bg-gray-100
                       {{ request()->routeIs('admin.bencana.*') ? 'bg-gray-100 font-semibold' : '' }}">
                 Bencana

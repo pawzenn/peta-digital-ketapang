@@ -45,6 +45,18 @@
                     @endif
                 </div>
 
+                <div>
+                    <label class="block text-sm font-medium mb-1">Peta Bencana (JPG)</label>
+                    <p class="text-xs text-gray-500 mb-1">Ditampilkan di section "Peta Bencana" pada halaman utama.</p>
+                    <input type="file" name="peta_bencana" accept=".jpg,.jpeg"
+                           class="w-full border rounded px-3 py-2">
+
+                    @if($profil->peta_bencana)
+                        <img src="{{ asset('storage/'.$profil->peta_bencana) }}"
+                             class="mt-3 w-full max-w-md border rounded">
+                    @endif
+                </div>
+
                 <button class="px-4 py-2 bg-black text-white rounded">
                     Simpan
                 </button>

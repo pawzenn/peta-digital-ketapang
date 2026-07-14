@@ -32,6 +32,7 @@ class ProfilController extends Controller
             'nama' => ['required','string','max:150'],
             'deskripsi' => ['nullable','string'],
             'peta_wilayah' => ['nullable','image','mimes:jpg,jpeg','max:2048'],
+            'peta_bencana' => ['nullable','image','mimes:jpg,jpeg','max:2048'],
         ]);
 
         $profil = Profil::first();
@@ -57,6 +58,18 @@ class ProfilController extends Controller
             );
 
             $profil->peta_wilayah = $path;
+        }
+
+        if ($request->hasFile('peta_bencana')) {
+
+            $imageService->deleteIfExists($profil->peta_bencana);
+
+            $path = $imageService->saveCroppedJpg(
+                $request->file('peta_bencana'),
+                'profil'
+            );
+
+            $profil->peta_bencana = $path;
         }
 
         $profil->save();

@@ -31,6 +31,7 @@ class UpdateHomestayRequest extends FormRequest
             'maps_link' => ['nullable', 'url'],
 
             'cover' => ['nullable', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+            'foto_rute' => ['nullable', 'image', 'mimes:jpg,jpeg', 'max:2048'],
             'gallery' => ['nullable', 'array'],
             'gallery.*' => ['image', 'mimes:jpg,jpeg', 'max:2048'],
         ];

@@ -3,38 +3,46 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Homestay;
 use App\Models\Profil;
+use App\Models\Umkm;
 use App\Models\Wisata;
 
 class HomeController extends Controller
 {
     public function home()
-{
-    $profil = \App\Models\Profil::first();
+    {
+        $profil = Profil::first();
 
-    // TOP WISATA
-    $wisataTop = \App\Models\Wisata::query()
-        ->orderByRaw('rating IS NULL')
-        ->orderByDesc('rating')
-        ->orderByDesc('created_at')
-        ->take(3)
-        ->get();
+        $wisataTop = Wisata::query()
+            ->orderByRaw('rating IS NULL')
+            ->orderByDesc('rating')
+            ->orderByDesc('created_at')
+            ->take(6)
+            ->get();
 
-    // TOP HOMESTAY
-    $homestayTop = \App\Models\Homestay::query()
-        ->orderByRaw('rating IS NULL')
-        ->orderByDesc('rating')
-        ->orderByDesc('created_at')
-        ->take(3)
-        ->get();
+        $homestayTop = Homestay::query()
+            ->orderByRaw('rating IS NULL')
+            ->orderByDesc('rating')
+            ->orderByDesc('created_at')
+            ->take(6)
+            ->get();
 
-    return view('public.home', compact(
-        'profil',
-        'wisataTop',
-        'homestayTop'
-    ));
-}
+        $umkmTop = Umkm::query()
+            ->with('kategori')
+            ->orderByRaw('rating IS NULL')
+            ->orderByDesc('rating')
+            ->orderByDesc('created_at')
+            ->take(6)
+            ->get();
 
+        return view('public.home', compact(
+            'profil',
+            'wisataTop',
+            'homestayTop',
+            'umkmTop'
+        ));
+    }
 
     public function profil()
     {

@@ -49,6 +49,15 @@ class HomestayController extends Controller
 
         $homestay->update(['cover_foto' => $coverPath]);
 
+        if ($request->hasFile('foto_rute')) {
+            $rutePath = $imageService->saveCroppedJpg(
+                $request->file('foto_rute'),
+                'homestay/rute'
+            );
+
+            $homestay->update(['foto_rute' => $rutePath]);
+        }
+
         // simpan gallery
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $img) {
@@ -102,6 +111,15 @@ class HomestayController extends Controller
             $homestay->cover_foto = $newCoverPath;
         }
 
+        if ($request->hasFile('foto_rute')) {
+            $imageService->deleteIfExists($homestay->foto_rute);
+
+            $homestay->foto_rute = $imageService->saveCroppedJpg(
+                $request->file('foto_rute'),
+                'homestay/rute'
+            );
+        }
+
         $homestay->save();
 
         // tambah gallery baru (tidak hapus yang lama)
@@ -126,6 +144,7 @@ class HomestayController extends Controller
     {
         // hapus cover
         $imageService->deleteIfExists($homestay->cover_foto);
+        $imageService->deleteIfExists($homestay->foto_rute);
 
         // hapus semua gallery files + records
         $homestay->load('galleries');

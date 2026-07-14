@@ -47,6 +47,15 @@ class WisataController extends Controller
 
         $wisata->update(['cover_foto' => $coverPath]);
 
+        if ($request->hasFile('foto_rute')) {
+            $rutePath = $imageService->saveCroppedJpg(
+                $request->file('foto_rute'),
+                'wisata/rute'
+            );
+
+            $wisata->update(['foto_rute' => $rutePath]);
+        }
+
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $img) {
                 $path = $imageService->saveCroppedJpg($img, 'wisata/gallery');
@@ -104,6 +113,15 @@ class WisataController extends Controller
             $wisatum->cover_foto = $newCoverPath;
         }
 
+        if ($request->hasFile('foto_rute')) {
+            $imageService->deleteIfExists($wisatum->foto_rute);
+
+            $wisatum->foto_rute = $imageService->saveCroppedJpg(
+                $request->file('foto_rute'),
+                'wisata/rute'
+            );
+        }
+
         $wisatum->save();
 
         if ($request->hasFile('gallery')) {
@@ -126,6 +144,7 @@ class WisataController extends Controller
     public function destroy(Wisata $wisatum, ImageService $imageService)
     {
         $imageService->deleteIfExists($wisatum->cover_foto);
+        $imageService->deleteIfExists($wisatum->foto_rute);
 
         $wisatum->load('galleries');
         foreach ($wisatum->galleries as $foto) {

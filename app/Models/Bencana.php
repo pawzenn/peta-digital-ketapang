@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-class Wisata extends Model
+class Bencana extends Model
 {
     protected $fillable = [
-        'nama', 'slug', 'deskripsi', 'rating', 'cover_foto', 'alamat', 'maps_link', 'foto_rute'
+        'nama', 'slug', 'jenis_bencana', 'tingkat_risiko', 'deskripsi', 'cover_foto', 'alamat', 'maps_link'
     ];
 
     public function galleries(): MorphMany

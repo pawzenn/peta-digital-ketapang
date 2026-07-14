@@ -9,6 +9,7 @@ class Profil extends Model
     protected $fillable = [
         'nama',
         'deskripsi',
-        'peta_wilayah'
+        'peta_wilayah',
+        'peta_bencana'
     ];
 }
