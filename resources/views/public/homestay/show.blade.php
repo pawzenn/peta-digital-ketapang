@@ -36,6 +36,8 @@
             </div>
         </div>
 
+        <x-public.gallery :images="$homestay->galleries" />
+
         {{-- RUTE --}}
         <div class="mt-14 grid gap-8 md:grid-cols-2 md:items-center">
             <div>
@@ -61,14 +63,21 @@
                     class="h-64 w-full rounded-xl border border-white/10 object-cover"
                     alt="Rute {{ $homestay->nama }}"
                 >
+            @elseif($homestay->maps_embed_url)
+                <iframe
+                    src="{{ $homestay->maps_embed_url }}"
+                    class="h-64 w-full rounded-xl border border-white/10"
+                    style="border:0"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen
+                ></iframe>
             @else
                 <div class="flex h-64 items-center justify-center rounded-xl border border-white/10 bg-neutral-800 text-neutral-500">
-                    Belum ada foto rute
+                    Belum ada info rute
                 </div>
             @endif
         </div>
-
-        <x-public.gallery :images="$homestay->galleries" />
 
     </div>
 </div>

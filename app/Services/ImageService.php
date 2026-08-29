@@ -35,6 +35,27 @@ class ImageService
         return $path;
     }
 
+    /**
+     * Simpan image sebagai PNG apa adanya (tanpa crop, transparansi tetap dipertahankan),
+     * hanya diperkecil kalau lebih lebar dari $maxWidth.
+     * Return: path relatif di disk public (contoh: profil/abc.png)
+     */
+    public function savePng(UploadedFile $file, string $dir, int $maxWidth = 1600): string
+    {
+        Storage::disk('public')->makeDirectory($dir);
+
+        $filename = uniqid('', true) . '.png';
+        $path = trim($dir, '/') . '/' . $filename;
+
+        $img = Image::read($file)
+            ->scaleDown(width: $maxWidth)
+            ->toPng();
+
+        Storage::disk('public')->put($path, (string) $img);
+
+        return $path;
+    }
+
     public function deleteIfExists(?string $path): void
     {
         if ($path && Storage::disk('public')->exists($path)) {

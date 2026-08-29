@@ -6,7 +6,14 @@
 
 {{-- HERO --}}
 <div class="relative -mt-20 flex h-screen items-center justify-center overflow-hidden">
-    <img src="{{ asset('images/hero-ketapang.jpg') }}" alt="Pelabuhan Ketapang" class="absolute inset-0 h-full w-full object-cover">
+    <video
+        src="{{ asset('images/hero-video-ketapang.mp4') }}"
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay
+        muted
+        loop
+        playsinline
+    ></video>
 
     {{-- soft glow behind navbar, for legibility over the photo --}}
     <div class="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(ellipse_60%_100%_at_50%_0%,rgba(255,247,239,0.8),rgba(255,247,239,0)_70%)]"></div>
@@ -15,9 +22,9 @@
 
     <div class="relative mt-16 flex flex-col items-center px-6 text-center">
         <h1 class="font-serif text-4xl font-bold text-white md:text-5xl">
-            Selamat Datang di Peta Digital Ketapang
+            Selamat Datang di Peta Digital Desa Ketapang
         </h1>
-        <p class="mt-4 max-w-xl text-white/85">
+        <p class="mt-4 max-w-2xl text-lg text-white/90 md:text-xl">
             Jelajahi wisata, homestay, dan UMKM Desa Ketapang, semua dalam satu peta digital.
         </p>
 
@@ -30,11 +37,11 @@
 <div id="konten" class="mx-auto max-w-7xl scroll-mt-20 px-6 py-16">
 
     {{-- PROFIL --}}
-    <div class="grid gap-10 md:grid-cols-2 md:items-center">
+    <div class="grid gap-10 md:grid-cols-[1fr_1.35fr] md:items-start">
         <div>
             <h2 class="text-2xl font-bold text-emerald-900">Profil Desa Ketapang</h2>
             <p class="mt-4 leading-relaxed text-neutral-600">
-                {{ \Illuminate\Support\Str::limit($profil->deskripsi ?? 'Website informasi desa berbasis peta untuk wisata, homestay, UMKM, dan kebencanaan.', 480) }}
+                {{ $profil->deskripsi_singkat ?? 'Website informasi desa berbasis peta untuk wisata, homestay, UMKM, dan kebencanaan.' }}
             </p>
         </div>
 
@@ -42,7 +49,7 @@
             <img
                 src="{{ asset('storage/' . $profil->peta_wilayah) }}"
                 alt="Peta Wilayah"
-                class="w-full rounded-xl border bg-white"
+                class="w-full"
             >
         @endif
     </div>
@@ -134,17 +141,123 @@
 
     {{-- PETA BENCANA --}}
     <div id="peta-bencana" class="mt-24 scroll-mt-24">
-        <h2 class="text-2xl font-bold text-emerald-900">Peta Bencana</h2>
+        <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-emerald-900">Peta Bencana</h2>
+            @if($bencanas->isNotEmpty())
+                <a href="/bencana" class="text-xs font-medium text-emerald-800 hover:underline sm:text-sm">Lihat Peta Lengkap &rarr;</a>
+            @endif
+        </div>
 
-        @if(!empty($profil?->peta_bencana))
-            <img
-                src="{{ asset('storage/' . $profil->peta_bencana) }}"
-                alt="Peta Bencana"
-                class="mt-6 w-full rounded-xl border bg-white"
-            >
-        @else
+        @php
+            $petaBencanaSlides = collect();
+
+            foreach ($bencanas as $b) {
+                if ($b->cover_foto) {
+                    $petaBencanaSlides->push([
+                        'label' => $b->jenis_label,
+                        'nama' => $b->nama,
+                        'deskripsi' => $b->deskripsi,
+                        'url' => asset('storage/'.$b->cover_foto),
+                        'slug' => $b->slug,
+                    ]);
+                }
+            }
+
+            $totalSlides = $petaBencanaSlides->count();
+            $extendedSlides = $totalSlides > 1
+                ? collect([$petaBencanaSlides->last()])->merge($petaBencanaSlides)->push($petaBencanaSlides->first())
+                : $petaBencanaSlides;
+        @endphp
+
+        @if($totalSlides === 0)
             <div class="mt-6 rounded-xl border bg-white p-6 text-neutral-500">
                 Peta bencana belum diunggah admin.
+            </div>
+        @else
+            <p class="mt-1 text-sm leading-relaxed text-neutral-500">Kumpulan peta tingkat kerawanan bencana di Desa Ketapang berdasarkan kajian BPBD Kabupaten Banyuwangi, sebagai acuan mitigasi dan kesiapsiagaan warga.</p>
+
+            <div class="mt-8" x-data="carousel({{ $totalSlides }}, 0)">
+                @if($totalSlides > 1)
+                    <div class="mb-6 hidden flex-wrap justify-center gap-2 sm:flex">
+                        @foreach($petaBencanaSlides as $i => $slide)
+                            <button
+                                type="button"
+                                @click="goTo({{ $i }})"
+                                :class="realIndex() === {{ $i }} ? 'bg-emerald-900 text-white' : 'bg-white text-neutral-700 ring-1 ring-black/10 hover:bg-emerald-50'"
+                                class="rounded-full px-4 py-1.5 text-sm font-medium transition-colors"
+                            >
+                                {{ $slide['label'] }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div
+                    class="relative overflow-hidden {{ $totalSlides > 1 ? 'cursor-grab select-none active:cursor-grabbing' : '' }}"
+                    @if($totalSlides > 1)
+                        @mousedown="dragStart($event)"
+                        @mousemove.window="dragMove($event)"
+                        @mouseup.window="dragEnd()"
+                        @touchstart="dragStart($event)"
+                        @touchmove="dragMove($event)"
+                        @touchend="dragEnd()"
+                        @click.capture="if (wasDragging) { $event.preventDefault(); $event.stopPropagation(); }"
+                    @endif
+                >
+                    <div
+                        class="flex items-center"
+                        @if($totalSlides > 1)
+                            :style="'transition:' + trackTransition() + '; transform: translateX(calc(-' + active + ' * 100% + ' + deltaX + 'px))'"
+                        @endif
+                    >
+                        @foreach($extendedSlides as $slide)
+                            <div class="w-full shrink-0 px-4 text-center sm:px-16">
+                                <a href="/bencana/{{ $slide['slug'] }}">
+                                    <img
+                                        src="{{ $slide['url'] }}"
+                                        alt="{{ $slide['nama'] }}"
+                                        class="mx-auto max-h-[680px] w-auto max-w-full rounded-lg shadow-md transition hover:opacity-90"
+                                    >
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if($totalSlides > 1)
+                        <button
+                            type="button"
+                            @click="manualPrev()"
+                            class="absolute left-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-2 text-neutral-800 shadow-md transition hover:bg-white sm:left-2 sm:p-3"
+                            aria-label="Sebelumnya"
+                        >
+                            <svg class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.5 15L7.5 10L12.5 5" />
+                            </svg>
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="manualNext()"
+                            class="absolute right-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/80 p-2 text-neutral-800 shadow-md transition hover:bg-white sm:right-2 sm:p-3"
+                            aria-label="Berikutnya"
+                        >
+                            <svg class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7.5 5L12.5 10L7.5 15" />
+                            </svg>
+                        </button>
+                    @endif
+                </div>
+
+                <div class="mx-auto mt-8 max-w-2xl text-center">
+                    @foreach($petaBencanaSlides as $i => $slide)
+                        <div @if($totalSlides > 1) x-show="realIndex() === {{ $i }}" x-cloak @endif>
+                            <h4 class="text-base font-semibold text-neutral-900">{{ $slide['nama'] }}</h4>
+                            @if(!empty($slide['deskripsi']))
+                                <p class="mt-2 text-sm leading-relaxed text-neutral-500">{{ $slide['deskripsi'] }}</p>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
             </div>
         @endif
     </div>

@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Large video assets - too big for GitHub, deploy/upload manually
+/public/images/*.mp4

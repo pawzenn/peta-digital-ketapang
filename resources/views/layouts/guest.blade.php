@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="page-fade">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,24 +7,26 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
-                </a>
-            </div>
+    <body class="min-h-screen bg-[#FFFCF2] font-sans text-neutral-900 antialiased">
+        <div class="flex min-h-screen flex-col items-center justify-center px-6 py-12">
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <a href="/" class="flex flex-col items-center gap-2">
+                <img src="{{ asset('images/logo-ketapang.png') }}" alt="Logo Desa Ketapang" class="h-16 w-auto">
+                <span class="font-serif text-xl font-bold text-emerald-900">Desa Ketapang</span>
+            </a>
+
+            <p class="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-orange-600">Admin Panel</p>
+
+            <div class="mt-8 w-full sm:max-w-md overflow-hidden rounded-xl border border-black/5 bg-white px-6 py-8 shadow-sm">
                 {{ $slot }}
             </div>
+
+            <a href="/" class="mt-6 text-sm text-neutral-500 hover:text-emerald-800 hover:underline">
+                &larr; Kembali ke situs
+            </a>
         </div>
     </body>
 </html>

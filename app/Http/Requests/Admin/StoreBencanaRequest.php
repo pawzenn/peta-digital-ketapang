@@ -15,7 +15,7 @@ class StoreBencanaRequest extends FormRequest
     {
         return [
             'nama' => ['required', 'string', 'max:150'],
-            'jenis_bencana' => ['required', 'string', 'in:banjir,longsor,kebakaran,gempa_bumi,angin_puting_beliung,lainnya'],
+            'jenis_bencana' => ['required', 'string', 'in:banjir,banjir_bandang,tanah_longsor,cuaca_ekstrem,gelombang_ekstrem_abrasi,gempa_bumi,kegagalan_teknologi,likuifaksi,kebakaran,angin_puting_beliung,lainnya'],
             'tingkat_risiko' => ['required', 'string', 'in:rendah,sedang,tinggi'],
             'deskripsi' => ['required', 'string'],
 

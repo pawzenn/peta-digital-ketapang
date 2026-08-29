@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreBencanaRequest;
 use App\Http\Requests\Admin\UpdateBencanaRequest;
 use App\Models\Bencana;
+use App\Models\Profil;
 use App\Services\ImageService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class BencanaController extends Controller
@@ -14,8 +16,31 @@ class BencanaController extends Controller
     public function index()
     {
         $bencanas = Bencana::latest()->paginate(10);
+        $profil = Profil::first();
 
-        return view('admin.bencana.index', compact('bencanas'));
+        return view('admin.bencana.index', compact('bencanas', 'profil'));
+    }
+
+    public function updatePetaBencana(Request $request, ImageService $imageService)
+    {
+        $request->validate([
+            'peta_bencana' => ['required', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+        ]);
+
+        $profil = Profil::first() ?? Profil::create(['nama' => '', 'deskripsi' => '']);
+
+        $imageService->deleteIfExists($profil->peta_bencana);
+
+        $profil->peta_bencana = $imageService->saveCroppedJpg(
+            $request->file('peta_bencana'),
+            'profil'
+        );
+
+        $profil->save();
+
+        return redirect()
+            ->route('admin.bencana.index')
+            ->with('success', 'Peta bencana berhasil diupdate.');
     }
 
     public function create()

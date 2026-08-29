@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bencana;
 use App\Models\Homestay;
 use App\Models\Profil;
 use App\Models\Umkm;
@@ -36,11 +37,14 @@ class HomeController extends Controller
             ->take(6)
             ->get();
 
+        $bencanas = Bencana::orderBy('nama')->get();
+
         return view('public.home', compact(
             'profil',
             'wisataTop',
             'homestayTop',
-            'umkmTop'
+            'umkmTop',
+            'bencanas'
         ));
     }
 

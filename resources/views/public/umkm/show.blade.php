@@ -42,6 +42,8 @@
             </div>
         </div>
 
+        <x-public.gallery :images="$umkm->galleries" />
+
         {{-- LOKASI --}}
         @if($umkm->alamat || $umkm->maps_link)
             <div class="mt-10">
@@ -61,8 +63,6 @@
                 @endif
             </div>
         @endif
-
-        <x-public.gallery :images="$umkm->galleries" />
 
     </div>
 </div>

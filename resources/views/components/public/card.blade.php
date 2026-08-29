@@ -7,9 +7,10 @@
     'badge' => null,
     'aspectClass' => 'aspect-[4/3]',
     'roundedClass' => 'rounded-xl',
+    'target' => null,
 ])
 
-<a href="{{ $detailUrl }}" class="group block overflow-hidden {{ $roundedClass }} bg-neutral-900 shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow-lg">
+<a href="{{ $detailUrl }}" @if($target) target="{{ $target }}" rel="noopener" @endif class="group block overflow-hidden {{ $roundedClass }} bg-neutral-900 shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow-lg">
     <div class="relative {{ $aspectClass }} overflow-hidden">
         @if($coverUrl)
             <img
