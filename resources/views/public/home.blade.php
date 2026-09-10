@@ -7,7 +7,7 @@
 {{-- HERO --}}
 <div class="relative -mt-20 flex h-screen items-center justify-center overflow-hidden">
     <video
-        src="{{ asset('images/hero-video-ketapang.mp4') }}"
+        src="{{ asset('images/Hero-Ketapang-v2.mp4') }}" 
         class="absolute inset-0 h-full w-full object-cover"
         autoplay
         muted
