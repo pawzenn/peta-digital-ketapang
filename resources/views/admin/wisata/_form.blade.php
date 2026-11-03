@@ -176,4 +176,6 @@
         @endif
     </div>
 
+    @include('admin.partials.detail-extras', ['model' => $wisata ?? null])
+
 </div>

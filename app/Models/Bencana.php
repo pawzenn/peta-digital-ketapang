@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Bencana extends Model
@@ -14,6 +15,13 @@ class Bencana extends Model
     public function galleries(): MorphMany
     {
         return $this->morphMany(Gallery::class, 'imageable')->orderBy('sort_order');
+    }
+
+    public function kejadians(): HasMany
+    {
+        return $this->hasMany(BencanaKejadian::class)
+            ->orderByDesc('tanggal_kejadian')
+            ->orderByDesc('id');
     }
 
     public function getJenisLabelAttribute(): string

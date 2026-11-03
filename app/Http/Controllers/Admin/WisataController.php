@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\SyncsDetailExtras;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreWisataRequest;
 use App\Http\Requests\Admin\UpdateWisataRequest;
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
 
 class WisataController extends Controller
 {
+    use SyncsDetailExtras;
+
     public function index()
     {
         $wisatas = Wisata::latest()->paginate(10);
@@ -37,6 +40,7 @@ class WisataController extends Controller
             'rating' => $data['rating'] ?? null,
             'alamat' => $data['alamat'] ?? null,
             'maps_link' => $data['maps_link'] ?? null,
+            'video_rute_link' => $data['video_rute_link'] ?? null,
             'cover_foto' => null,
         ]);
 
@@ -68,6 +72,8 @@ class WisataController extends Controller
             }
         }
 
+        $this->syncDetailExtras($wisata, $request->input('video_reviews', []), $request->input('penghargaan', []));
+
         return redirect()
             ->route('admin.wisata.index')
             ->with('success', 'Wisata berhasil ditambahkan.');
@@ -79,7 +85,7 @@ class WisataController extends Controller
      */
     public function edit(Wisata $wisatum)
     {
-        $wisatum->load('galleries');
+        $wisatum->load(['galleries', 'videoReviews', 'penghargaans']);
 
         // view pakai variable $wisata (biar konsisten dengan blade kamu)
         $wisata = $wisatum;
@@ -101,6 +107,7 @@ class WisataController extends Controller
         $wisatum->rating = $data['rating'] ?? null;
         $wisatum->alamat = $data['alamat'] ?? null;
         $wisatum->maps_link = $data['maps_link'] ?? null;
+        $wisatum->video_rute_link = $data['video_rute_link'] ?? null;
 
         if ($request->hasFile('cover')) {
             $imageService->deleteIfExists($wisatum->cover_foto);
@@ -123,6 +130,8 @@ class WisataController extends Controller
         }
 
         $wisatum->save();
+
+        $this->syncDetailExtras($wisatum, $request->input('video_reviews', []), $request->input('penghargaan', []));
 
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $img) {
@@ -151,6 +160,7 @@ class WisataController extends Controller
             $imageService->deleteIfExists($foto->file_path);
         }
         $wisatum->galleries()->delete();
+        $this->deleteDetailExtras($wisatum);
 
         $wisatum->delete();
 

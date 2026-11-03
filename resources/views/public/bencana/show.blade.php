@@ -106,6 +106,47 @@
                         @if($b->deskripsi)
                             <p class="mx-auto mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">{{ $b->deskripsi }}</p>
                         @endif
+
+                        @if($b->kejadians->isNotEmpty())
+                            <div class="mx-auto mt-10 max-w-2xl text-left">
+                                <h3 class="font-serif text-lg font-bold text-emerald-900">Riwayat Kejadian</h3>
+
+                                <ol class="mt-5 space-y-8 border-l-2 border-emerald-200 pl-6">
+                                    @foreach($b->kejadians as $k)
+                                        <li class="relative">
+                                            <span class="absolute -left-[31px] top-1.5 h-3 w-3 rounded-full bg-emerald-700 ring-4 ring-white"></span>
+
+                                            <time class="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                                                {{ $k->tanggal_kejadian->locale('id')->translatedFormat('j F Y') }}
+                                            </time>
+                                            <h4 class="mt-1 text-base font-semibold text-neutral-900">{{ $k->judul }}</h4>
+
+                                            @if($k->lokasi)
+                                                <p class="mt-0.5 text-sm text-neutral-500">{{ $k->lokasi }}</p>
+                                            @endif
+
+                                            @if($k->uraian)
+                                                <p class="mt-2 text-sm leading-relaxed text-neutral-600">{!! nl2br(e($k->uraian)) !!}</p>
+                                            @endif
+
+                                            @if(count($k->dampak))
+                                                <div class="mt-3 flex flex-wrap gap-2">
+                                                    @foreach($k->dampak as $label => $nilai)
+                                                        <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 ring-1 ring-emerald-100">
+                                                            {{ $label }}: {{ $nilai }}
+                                                        </span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+
+                                            @if($k->sumber)
+                                                <p class="mt-2 text-xs text-neutral-400">Sumber: {{ $k->sumber }}</p>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>

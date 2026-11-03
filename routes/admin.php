@@ -13,11 +13,7 @@ use App\Models\KategoriUmkm;
 use App\Models\Umkm;
 use App\Models\Wisata;
 
-Route::prefix('admin')->name('admin.')->group(function () {
-
-    Route::get('/', function () {
-        return redirect()->route('admin.dashboard');
-    });
+Route::prefix(config('app.admin_path'))->name('admin.')->group(function () {
 
     Route::middleware('auth')->group(function () {
 

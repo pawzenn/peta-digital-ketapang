@@ -34,13 +34,7 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-between pt-2">
-            @if (Route::has('password.request'))
-                <a class="rounded-md text-sm text-neutral-500 underline-offset-4 hover:text-emerald-800 hover:underline focus:outline-none focus:ring-2 focus:ring-emerald-700 focus:ring-offset-2" href="{{ route('password.request') }}">
-                    {{ __('Lupa password?') }}
-                </a>
-            @endif
-
+        <div class="flex items-center justify-end pt-2">
             <x-primary-button>
                 {{ __('Masuk') }}
             </x-primary-button>

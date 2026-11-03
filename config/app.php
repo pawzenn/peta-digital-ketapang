@@ -118,6 +118,19 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Alamat Panel Admin
+    |--------------------------------------------------------------------------
+    |
+    | Halaman login admin berada tepat di alamat ini (contoh: /hak-akses-admin-ktgxumm),
+    | dan seluruh halaman admin berada di bawahnya. Alamat /admin dan /login
+    | sengaja tidak ada (404). Ubah lewat ADMIN_PATH di .env bila perlu.
+    |
+    */
+
+    'admin_path' => env('ADMIN_PATH', 'hak-akses-admin-ktgxumm'),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),

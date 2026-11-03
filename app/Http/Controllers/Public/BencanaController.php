@@ -24,7 +24,7 @@ class BencanaController extends Controller
     public function show(string $slug)
     {
         $bencana = Bencana::where('slug', $slug)->firstOrFail();
-        $bencanas = Bencana::orderBy('nama')->get();
+        $bencanas = Bencana::with('kejadians')->orderBy('nama')->get();
 
         return view('public.bencana.show', compact('bencana', 'bencanas'));
     }

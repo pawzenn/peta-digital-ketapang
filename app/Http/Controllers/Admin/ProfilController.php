@@ -32,7 +32,7 @@ class ProfilController extends Controller
             'nama' => ['required','string','max:150'],
             'deskripsi' => ['nullable','string'],
             'deskripsi_singkat' => ['nullable','string','max:500'],
-            'peta_wilayah' => ['nullable','image','mimes:jpg,jpeg,png','max:2048'],
+            'peta_wilayah' => ['nullable','image','mimes:jpg,jpeg,png','max:4096'],
             'alamat' => ['nullable','string','max:255'],
             'email' => ['nullable','email','max:150'],
             'whatsapp' => ['nullable','string','max:20'],

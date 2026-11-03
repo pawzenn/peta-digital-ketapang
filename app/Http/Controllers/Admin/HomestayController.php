@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\SyncsDetailExtras;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreHomestayRequest;
 use App\Http\Requests\Admin\UpdateHomestayRequest;
@@ -11,6 +12,8 @@ use Illuminate\Support\Str;
 
 class HomestayController extends Controller
 {
+    use SyncsDetailExtras;
+
     public function index()
     {
         $homestays = Homestay::latest()->paginate(10);
@@ -38,6 +41,7 @@ class HomestayController extends Controller
             'rating' => $data['rating'] ?? null,
             'alamat' => $data['alamat'] ?? null,
             'maps_link' => $data['maps_link'] ?? null,
+            'video_rute_link' => $data['video_rute_link'] ?? null,
             'cover_foto' => null,
         ]);
 
@@ -71,6 +75,8 @@ class HomestayController extends Controller
             }
         }
 
+        $this->syncDetailExtras($homestay, $request->input('video_reviews', []), $request->input('penghargaan', []));
+
         return redirect()
             ->route('admin.homestay.index')
             ->with('success', 'Homestay berhasil ditambahkan.');
@@ -78,7 +84,7 @@ class HomestayController extends Controller
 
     public function edit(Homestay $homestay)
     {
-        $homestay->load('galleries');
+        $homestay->load(['galleries', 'videoReviews', 'penghargaans']);
 
         return view('admin.homestay.edit', compact('homestay'));
     }
@@ -98,6 +104,7 @@ class HomestayController extends Controller
         $homestay->rating = $data['rating'] ?? null;
         $homestay->alamat = $data['alamat'] ?? null;
         $homestay->maps_link = $data['maps_link'] ?? null;
+        $homestay->video_rute_link = $data['video_rute_link'] ?? null;
 
         // ganti cover kalau ada upload baru
         if ($request->hasFile('cover')) {
@@ -121,6 +128,8 @@ class HomestayController extends Controller
         }
 
         $homestay->save();
+
+        $this->syncDetailExtras($homestay, $request->input('video_reviews', []), $request->input('penghargaan', []));
 
         // tambah gallery baru (tidak hapus yang lama)
         if ($request->hasFile('gallery')) {
@@ -152,6 +161,7 @@ class HomestayController extends Controller
             $imageService->deleteIfExists($foto->file_path);
         }
         $homestay->galleries()->delete();
+        $this->deleteDetailExtras($homestay);
 
         $homestay->delete();
 

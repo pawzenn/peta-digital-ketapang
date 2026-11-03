@@ -8,8 +8,6 @@ use App\Http\Controllers\Public\UmkmController;
 use App\Http\Controllers\Public\WisataController;
 
 
-Route::redirect('/login', '/admin/login');
-
 Route::get('/', [HomeController::class, 'home']);
 Route::get('/profil', [HomeController::class, 'profil']);
 
