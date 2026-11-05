@@ -9,6 +9,7 @@ use App\Models\Bencana;
 use App\Models\Profil;
 use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class BencanaController extends Controller
@@ -24,7 +25,7 @@ class BencanaController extends Controller
     public function updatePetaBencana(Request $request, ImageService $imageService)
     {
         $request->validate([
-            'peta_bencana' => ['required', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+            'peta_bencana' => ['required', 'image', 'mimes:jpg,jpeg', 'max:4096'],
         ]);
 
         $profil = Profil::first() ?? Profil::create(['nama' => '', 'deskripsi' => '']);
@@ -73,6 +74,8 @@ class BencanaController extends Controller
 
         $bencana->update(['cover_foto' => $coverPath]);
 
+        $this->syncKejadian($bencana, $request->input('kejadian', []));
+
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $img) {
                 $path = $imageService->saveCroppedJpg($img, 'bencana/gallery');
@@ -92,7 +95,7 @@ class BencanaController extends Controller
 
     public function edit(Bencana $bencana)
     {
-        $bencana->load('galleries');
+        $bencana->load(['galleries', 'kejadians']);
 
         return view('admin.bencana.edit', compact('bencana'));
     }
@@ -126,6 +129,8 @@ class BencanaController extends Controller
 
         $bencana->save();
 
+        $this->syncKejadian($bencana, $request->input('kejadian', []));
+
         if ($request->hasFile('gallery')) {
             foreach ($request->file('gallery') as $img) {
                 $path = $imageService->saveCroppedJpg($img, 'bencana/gallery');
@@ -158,6 +163,31 @@ class BencanaController extends Controller
         return redirect()
             ->route('admin.bencana.index')
             ->with('success', 'Data bencana berhasil dihapus.');
+    }
+
+    /**
+     * Ganti seluruh riwayat kejadian bencana dengan daftar baru dari form.
+     */
+    private function syncKejadian(Bencana $bencana, array $rows): void
+    {
+        DB::transaction(function () use ($bencana, $rows) {
+            $bencana->kejadians()->delete();
+
+            foreach ($rows as $row) {
+                $bencana->kejadians()->create([
+                    'judul' => $row['judul'],
+                    'tanggal_kejadian' => $row['tanggal_kejadian'],
+                    'lokasi' => $row['lokasi'] ?? null,
+                    'uraian' => $row['uraian'] ?? null,
+                    'korban_meninggal' => $row['korban_meninggal'] ?? null,
+                    'korban_luka' => $row['korban_luka'] ?? null,
+                    'warga_mengungsi' => $row['warga_mengungsi'] ?? null,
+                    'rumah_rusak' => $row['rumah_rusak'] ?? null,
+                    'kerugian' => $row['kerugian'] ?? null,
+                    'sumber' => $row['sumber'] ?? null,
+                ]);
+            }
+        });
     }
 
     private function uniqueSlug(string $base, ?int $ignoreId = null): string

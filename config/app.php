@@ -118,6 +118,27 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Alamat Panel Admin
+    |--------------------------------------------------------------------------
+    |
+    | RAHASIA: hanya developer yang tahu. Untuk mengetahui atau mengubah alamat
+    | admin, hubungi developer.
+    |
+    | Alamat diisi lewat ADMIN_PATH di file .env server (tidak ikut Git).
+    | Halaman login admin berada tepat di alamat itu, dan seluruh halaman admin
+    | berada di bawahnya. Alamat /admin dan /login sengaja tidak ada (404).
+    | Jika ADMIN_PATH kosong, dipakai alamat acak turunan APP_KEY (bukan alamat
+    | tetap yang tertulis di kode).
+    |
+    */
+
+    'admin_path' => trim(
+        (string) (env('ADMIN_PATH') ?: 'admin-' . substr(hash_hmac('sha256', 'admin-path', (string) env('APP_KEY', '')), 0, 12)),
+        '/'
+    ),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),

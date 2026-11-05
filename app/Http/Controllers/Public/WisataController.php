@@ -17,7 +17,7 @@ class WisataController extends Controller
     public function show(string $slug)
     {
         $wisata = Wisata::where('slug', $slug)
-            ->with('galleries')
+            ->with(['galleries', 'videoReviews', 'penghargaans'])
             ->firstOrFail();
 
         return view('public.wisata.show', compact('wisata'));

@@ -33,10 +33,14 @@
                 <p class="mt-4 text-sm leading-relaxed text-white/85">
                     {{ $wisata->deskripsi }}
                 </p>
+
+                <x-public.award-badges :awards="$wisata->penghargaans" compact />
             </div>
         </div>
 
         <x-public.gallery :images="$wisata->galleries" />
+
+        <x-public.video-reviews :videos="$wisata->videoReviews" />
 
         {{-- RUTE --}}
         <div class="mt-14 grid gap-8 md:grid-cols-2 md:items-center">
@@ -49,11 +53,17 @@
                     </p>
                 @endif
 
-                @if($wisata->maps_link)
-                    <a href="{{ $wisata->maps_link }}" target="_blank"
-                       class="mt-4 inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-                        Buka Maps
-                    </a>
+                @if($wisata->maps_link || $wisata->video_rute_link)
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        @if($wisata->maps_link)
+                            <a href="{{ $wisata->maps_link }}" target="_blank"
+                               class="inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
+                                Buka Maps
+                            </a>
+                        @endif
+
+                        <x-public.video-route :link="$wisata->video_rute_link" :embed="$wisata->video_rute_embed_url" />
+                    </div>
                 @endif
             </div>
 

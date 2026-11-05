@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Admin\Concerns\SyncsDetailExtras;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUmkmRequest;
 use App\Http\Requests\Admin\UpdateUmkmRequest;
@@ -13,6 +14,8 @@ use Illuminate\Support\Str;
 
 class UmkmController extends Controller
 {
+    use SyncsDetailExtras;
+
     /**
      * Display list + FILTER kategori
      */
@@ -60,6 +63,7 @@ class UmkmController extends Controller
             'rating' => $data['rating'] ?? null,
             'alamat' => $data['alamat'] ?? null,
             'maps_link' => $data['maps_link'] ?? null,
+            'video_rute_link' => $data['video_rute_link'] ?? null,
             'cover_foto' => null,
         ]);
 
@@ -70,6 +74,12 @@ class UmkmController extends Controller
         );
 
         $umkm->update(['cover_foto' => $coverPath]);
+
+        if ($request->hasFile('foto_rute')) {
+            $umkm->update([
+                'foto_rute' => $imageService->saveCroppedJpg($request->file('foto_rute'), 'umkm/rute'),
+            ]);
+        }
 
         // Simpan gallery
         if ($request->hasFile('gallery')) {
@@ -84,6 +94,8 @@ class UmkmController extends Controller
             }
         }
 
+        $this->syncDetailExtras($umkm, $request->input('video_reviews', []), $request->input('penghargaan', []));
+
         return redirect()
             ->route('admin.umkm.index')
             ->with('success', 'UMKM berhasil ditambahkan.');
@@ -94,7 +106,7 @@ class UmkmController extends Controller
      */
     public function edit(Umkm $umkm)
     {
-        $umkm->load('galleries');
+        $umkm->load(['galleries', 'videoReviews', 'penghargaans']);
         $kategoris = KategoriUmkm::orderBy('nama')->get();
 
         return view('admin.umkm.edit', compact('umkm', 'kategoris'));
@@ -119,6 +131,7 @@ class UmkmController extends Controller
         $umkm->rating = $data['rating'] ?? null;
         $umkm->alamat = $data['alamat'] ?? null;
         $umkm->maps_link = $data['maps_link'] ?? null;
+        $umkm->video_rute_link = $data['video_rute_link'] ?? null;
 
         // ganti cover jika ada
         if ($request->hasFile('cover')) {
@@ -132,7 +145,18 @@ class UmkmController extends Controller
             $umkm->cover_foto = $newCover;
         }
 
+        if ($request->hasFile('foto_rute')) {
+            $imageService->deleteIfExists($umkm->foto_rute);
+
+            $umkm->foto_rute = $imageService->saveCroppedJpg(
+                $request->file('foto_rute'),
+                'umkm/rute'
+            );
+        }
+
         $umkm->save();
+
+        $this->syncDetailExtras($umkm, $request->input('video_reviews', []), $request->input('penghargaan', []));
 
         // tambah gallery baru
         if ($request->hasFile('gallery')) {
@@ -159,6 +183,7 @@ class UmkmController extends Controller
     {
         // hapus cover
         $imageService->deleteIfExists($umkm->cover_foto);
+        $imageService->deleteIfExists($umkm->foto_rute);
 
         // hapus gallery
         $umkm->load('galleries');
@@ -167,6 +192,7 @@ class UmkmController extends Controller
         }
 
         $umkm->galleries()->delete();
+        $this->deleteDetailExtras($umkm);
         $umkm->delete();
 
         return redirect()

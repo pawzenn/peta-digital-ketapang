@@ -99,6 +99,31 @@
         @endif
     </div>
 
+    {{-- Foto Rute --}}
+    <div>
+        <label class="mb-1.5 block text-sm font-medium text-neutral-700">Foto Rute (untuk section "Rute" di halaman detail)</label>
+        <input
+            type="file"
+            name="foto_rute"
+            accept=".jpg,.jpeg"
+            class="w-full rounded-lg border-neutral-300 text-sm shadow-sm focus:border-emerald-700 focus:ring-emerald-700"
+        >
+        @error('foto_rute')
+            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+        @enderror
+
+        @if($isEdit && $umkm->foto_rute)
+            <div class="mt-3">
+                <p class="mb-2 text-sm text-neutral-500">Foto rute saat ini:</p>
+                <img
+                    src="{{ asset('storage/' . $umkm->foto_rute) }}"
+                    alt="Rute {{ $umkm->nama }}"
+                    class="h-48 w-full max-w-md rounded-lg border border-neutral-200 object-cover"
+                >
+            </div>
+        @endif
+    </div>
+
     {{-- Gallery --}}
     <div>
         <label class="mb-1.5 block text-sm font-medium text-neutral-700">Gallery (boleh banyak, JPG/JPEG)</label>
@@ -126,5 +151,7 @@
             </div>
         @endif
     </div>
+
+    @include('admin.partials.detail-extras', ['model' => $umkm ?? null])
 
 </div>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>@yield('title', 'Admin - Peta Digital Ketapang')</title>
+    @include('partials.favicon')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

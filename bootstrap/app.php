@@ -19,7 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Biarkan default (jangan pakai redirectGuestsTo/redirectUsersTo)
+        // Admin yang sudah login lalu membuka alamat login diarahkan ke dashboard.
+        $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

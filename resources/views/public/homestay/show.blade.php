@@ -33,10 +33,14 @@
                 <p class="mt-4 text-sm leading-relaxed text-white/85">
                     {{ $homestay->deskripsi }}
                 </p>
+
+                <x-public.award-badges :awards="$homestay->penghargaans" compact />
             </div>
         </div>
 
         <x-public.gallery :images="$homestay->galleries" />
+
+        <x-public.video-reviews :videos="$homestay->videoReviews" />
 
         {{-- RUTE --}}
         <div class="mt-14 grid gap-8 md:grid-cols-2 md:items-center">
@@ -49,11 +53,17 @@
                     </p>
                 @endif
 
-                @if($homestay->maps_link)
-                    <a href="{{ $homestay->maps_link }}" target="_blank"
-                       class="mt-4 inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-                        Buka Maps
-                    </a>
+                @if($homestay->maps_link || $homestay->video_rute_link)
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        @if($homestay->maps_link)
+                            <a href="{{ $homestay->maps_link }}" target="_blank"
+                               class="inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
+                                Buka Maps
+                            </a>
+                        @endif
+
+                        <x-public.video-route :link="$homestay->video_rute_link" :embed="$homestay->video_rute_embed_url" />
+                    </div>
                 @endif
             </div>
 

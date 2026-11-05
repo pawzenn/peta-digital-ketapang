@@ -34,10 +34,21 @@ class StoreWisataRequest extends FormRequest
             'maps_link' => ['nullable', 'url'],
 
             // FOTO: JPG/JPEG only
-            'cover' => ['required', 'image', 'mimes:jpg,jpeg', 'max:2048'],
-            'foto_rute' => ['nullable', 'image', 'mimes:jpg,jpeg', 'max:2048'],
+            'cover' => ['required', 'image', 'mimes:jpg,jpeg', 'max:4096'],
+            'foto_rute' => ['nullable', 'image', 'mimes:jpg,jpeg', 'max:4096'],
             'gallery' => ['nullable', 'array'],
-            'gallery.*' => ['image', 'mimes:jpg,jpeg', 'max:2048'],
+            'gallery.*' => ['image', 'mimes:jpg,jpeg', 'max:4096'],
+
+            'video_rute_link' => ['nullable', 'url', 'max:255'],
+
+            'video_reviews' => ['nullable', 'array'],
+            'video_reviews.*.url' => ['required', 'url', 'max:255'],
+            'video_reviews.*.caption' => ['nullable', 'string', 'max:150'],
+
+            'penghargaan' => ['nullable', 'array'],
+            'penghargaan.*.nama' => ['required', 'string', 'max:150'],
+            'penghargaan.*.tahun' => ['nullable', 'digits:4'],
+            'penghargaan.*.pemberi' => ['nullable', 'string', 'max:150'],
         ];
     }
 }

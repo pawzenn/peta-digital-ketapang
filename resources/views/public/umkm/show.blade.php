@@ -39,15 +39,19 @@
                 <p class="mt-4 text-sm leading-relaxed text-white/85">
                     {{ $umkm->deskripsi }}
                 </p>
+
+                <x-public.award-badges :awards="$umkm->penghargaans" compact />
             </div>
         </div>
 
         <x-public.gallery :images="$umkm->galleries" />
 
-        {{-- LOKASI --}}
-        @if($umkm->alamat || $umkm->maps_link)
-            <div class="mt-10">
-                <h2 class="text-xl font-bold">Lokasi</h2>
+        <x-public.video-reviews :videos="$umkm->videoReviews" />
+
+        {{-- RUTE --}}
+        <div class="mt-14 grid gap-8 md:grid-cols-2 md:items-center">
+            <div>
+                <h2 class="text-xl font-bold">Rute</h2>
 
                 @if($umkm->alamat)
                     <p class="mt-4 text-sm leading-relaxed text-white/80">
@@ -55,14 +59,41 @@
                     </p>
                 @endif
 
-                @if($umkm->maps_link)
-                    <a href="{{ $umkm->maps_link }}" target="_blank"
-                       class="mt-4 inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-                        Buka Maps
-                    </a>
+                @if($umkm->maps_link || $umkm->video_rute_link)
+                    <div class="mt-4 flex flex-wrap items-center gap-3">
+                        @if($umkm->maps_link)
+                            <a href="{{ $umkm->maps_link }}" target="_blank"
+                               class="inline-block rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
+                                Buka Maps
+                            </a>
+                        @endif
+
+                        <x-public.video-route :link="$umkm->video_rute_link" :embed="$umkm->video_rute_embed_url" />
+                    </div>
                 @endif
             </div>
-        @endif
+
+            @if($umkm->foto_rute)
+                <img
+                    src="{{ asset('storage/'.$umkm->foto_rute) }}"
+                    class="h-64 w-full rounded-xl border border-white/10 object-cover"
+                    alt="Rute {{ $umkm->nama }}"
+                >
+            @elseif($umkm->maps_embed_url)
+                <iframe
+                    src="{{ $umkm->maps_embed_url }}"
+                    class="h-64 w-full rounded-xl border border-white/10"
+                    style="border:0"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen
+                ></iframe>
+            @else
+                <div class="flex h-64 items-center justify-center rounded-xl border border-white/10 bg-neutral-800 text-neutral-500">
+                    Belum ada info rute
+                </div>
+            @endif
+        </div>
 
     </div>
 </div>

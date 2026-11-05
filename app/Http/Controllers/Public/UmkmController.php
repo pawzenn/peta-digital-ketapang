@@ -27,7 +27,7 @@ class UmkmController extends Controller
     public function show(string $slug)
     {
         $umkm = Umkm::where('slug', $slug)
-            ->with(['kategori', 'galleries'])
+            ->with(['kategori', 'galleries', 'videoReviews', 'penghargaans'])
             ->firstOrFail();
 
         return view('public.umkm.show', compact('umkm'));

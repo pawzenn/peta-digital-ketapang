@@ -17,7 +17,7 @@ class HomestayController extends Controller
     public function show(string $slug)
     {
         $homestay = Homestay::where('slug', $slug)
-            ->with('galleries')
+            ->with(['galleries', 'videoReviews', 'penghargaans'])
             ->firstOrFail();
 
         return view('public.homestay.show', compact('homestay'));
